@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { Trash2, AlertTriangle, Loader2 } from 'lucide-react'
 import { ModalPortal } from '@/components/ui/modal-portal'
 
@@ -53,7 +52,7 @@ export function DeleteQuestionModal({
           <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-red-400">
             <p className="text-sm font-medium text-gray-900 mb-1">Nội dung câu hỏi:</p>
             <p className="text-sm text-gray-700 italic line-clamp-3">
-              "{questionContent}"
+              &quot;{questionContent}&quot;
             </p>
           </div>
           

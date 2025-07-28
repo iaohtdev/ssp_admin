@@ -6,10 +6,17 @@ import { ModalPortal } from '@/components/ui/modal-portal'
 import { Pack, Category } from '@/types'
 import * as XLSX from 'xlsx'
 
+interface QuestionFormData {
+  content: string
+  pack_id?: string | null
+  category_id?: string | null
+  is_active: boolean
+}
+
 interface QuestionUploadModalProps {
   isOpen: boolean
   onClose: () => void
-  onUpload: (questions: any[]) => Promise<void>
+  onUpload: (questions: QuestionFormData[]) => Promise<void>
   packs: Pack[]
   categories: Category[]
 }
@@ -29,7 +36,7 @@ export function QuestionUploadModal({
   const [file, setFile] = useState<File | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadResult, setUploadResult] = useState<UploadResult | null>(null)
-  const [previewData, setPreviewData] = useState<any[]>([])
+  const [previewData, setPreviewData] = useState<ParsedQuestion[]>([])
   const [showPreview, setShowPreview] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -63,7 +70,7 @@ export function QuestionUploadModal({
         const worksheet = workbook.Sheets[sheetName]
         const jsonData = XLSX.utils.sheet_to_json(worksheet)
         
-        setPreviewData(jsonData)
+        setPreviewData(jsonData as ParsedQuestion[])
         setShowPreview(true)
       } catch (error) {
         console.error('Lỗi khi đọc file Excel:', error)
@@ -74,10 +81,10 @@ export function QuestionUploadModal({
   }
 
   // Validate dữ liệu
-  const validateData = (data: any[]): { valid: any[]; errors: { row: number; message: string }[] } => {
-    const valid: any[] = []
+  const validateData = (data: ParsedQuestion[]): ValidationResult => {
+    const valid: QuestionFormData[] = []
     const errors: { row: number; message: string }[] = []
-
+  
     data.forEach((row, index) => {
       const rowNumber = index + 2 // +2 vì Excel bắt đầu từ 1 và có header
       
@@ -86,30 +93,30 @@ export function QuestionUploadModal({
         errors.push({ row: rowNumber, message: 'Nội dung câu hỏi không được để trống' })
         return
       }
-
+  
       // Kiểm tra pack_id (nếu có)
       if (row.pack_id && !packs.find(p => p.id === row.pack_id)) {
         errors.push({ row: rowNumber, message: `Pack ID "${row.pack_id}" không tồn tại` })
         return
       }
-
+  
       // Kiểm tra category_id (nếu có)
       if (row.category_id && !categories.find(c => c.id === row.category_id)) {
         errors.push({ row: rowNumber, message: `Category ID "${row.category_id}" không tồn tại` })
         return
       }
-
+  
       // Chuẩn hóa dữ liệu
-      const validRow = {
+      const validRow: QuestionFormData = {
         content: row.content.toString().trim(),
         pack_id: row.pack_id || null,
         category_id: row.category_id || null,
-        is_active: row.is_active === true || row.is_active === 'true' || row.is_active === 1 || row.is_active === '1'
+        is_active: Boolean(row.is_active === true || row.is_active === 'true' || row.is_active === 1 || row.is_active === '1')
       }
-
+  
       valid.push(validRow)
     })
-
+  
     return { valid, errors }
   }
 
@@ -202,7 +209,7 @@ export function QuestionUploadModal({
             <h3 className="font-medium text-blue-900 mb-2">Hướng dẫn sử dụng:</h3>
             <ul className="text-sm text-blue-800 space-y-1 mb-3">
               <li>• File Excel cần có các cột: content, pack_id, category_id, is_active</li>
-              <li>• Cột "content" là bắt buộc, các cột khác có thể để trống</li>
+              <li>• Cột &quot;content&quot; là bắt buộc, các cột khác có thể để trống</li>
               <li>• pack_id và category_id phải tồn tại trong hệ thống</li>
               <li>• is_active: true/false hoặc 1/0</li>
             </ul>
@@ -352,3 +359,16 @@ export function QuestionUploadModal({
     </ModalPortal>
   )
 }
+
+interface ParsedQuestion {
+  content: string
+  pack_id?: string
+  category_id?: string
+  is_active?: boolean | string | number
+}
+
+interface ValidationResult {
+  valid: QuestionFormData[]
+  errors: { row: number; message: string }[]
+}
+

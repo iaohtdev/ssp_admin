@@ -52,7 +52,7 @@ export function DeletePackModal({
           <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-red-400">
             <p className="text-sm font-medium text-gray-900 mb-1">Tên gói:</p>
             <p className="text-sm text-gray-700 italic">
-              "{packName}"
+              &quot;{packName}&quot;
             </p>
           </div>
           

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, Edit, Trash2, Eye, Filter, MessageSquare, Upload } from 'lucide-react'
+import { Plus, Edit, Trash2, Eye, Upload } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { supabaseHelpers } from '@/lib/supabase'
 import { Question, Pack, Category } from '@/types'
@@ -11,6 +11,13 @@ import { QuestionDetailModal } from '@/components/questions/question-detail-moda
 import { QuestionUploadModal } from '@/components/questions/question-upload-modal'
 
 import { useToast } from '@/hooks/use-toast'
+
+interface QuestionFormData {
+  content: string
+  pack_id?: string | null
+  category_id?: string | null
+  is_active: boolean
+}
 
 interface QuestionWithRelations extends Question {
   packs?: { name: string } | null
@@ -39,7 +46,7 @@ export default function QuestionsPage() {
   const [selectedQuestion, setSelectedQuestion] = useState<QuestionWithRelations | null>(null)
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create')
   const [isDeleting, setIsDeleting] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  // Xóa dòng: const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Load data from Supabase
   useEffect(() => {
@@ -125,16 +132,17 @@ export default function QuestionsPage() {
   }
 
   // Handle form submit
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = async (data: QuestionFormData) => {
     try {
-      setIsSubmitting(true)
       setError(null)
       
-      // Xử lý dữ liệu: chuyển chuỗi rỗng thành null cho foreign keys
+      // Xử lý dữ liệu: chuyển chuỗi rỗng thành null cho foreign keys và thêm likes/dislikes
       const processedData = {
         ...data,
         pack_id: data.pack_id === '' ? null : data.pack_id,
-        category_id: data.category_id === '' ? null : data.category_id
+        category_id: data.category_id === '' ? null : data.category_id,
+        likes: 0,
+        dislikes: 0
       }
       
       if (formMode === 'create') {
@@ -142,7 +150,13 @@ export default function QuestionsPage() {
         setQuestions(prev => [newQuestion, ...prev])
         toast.success('Thành công!', 'Câu hỏi đã được tạo thành công')
       } else if (selectedQuestion) {
-        const updatedQuestion = await supabaseHelpers.updateQuestion(selectedQuestion.id, processedData)
+        // Khi update, không cần thêm likes/dislikes vì đã có sẵn
+        const updateData = {
+          ...data,
+          pack_id: data.pack_id === '' ? null : data.pack_id,
+          category_id: data.category_id === '' ? null : data.category_id
+        }
+        const updatedQuestion = await supabaseHelpers.updateQuestion(selectedQuestion.id, updateData)
         setQuestions(prev => prev.map(question => 
           question.id === selectedQuestion.id ? updatedQuestion : question
         ))
@@ -155,8 +169,6 @@ export default function QuestionsPage() {
       console.error('Lỗi khi lưu câu hỏi:', err)
       setError('Không thể lưu câu hỏi. Vui lòng thử lại.')
       toast.error('Lỗi!', 'Không thể lưu câu hỏi. Vui lòng thử lại.')
-    } finally {
-      setIsSubmitting(false)
     }
   }
 
@@ -180,11 +192,17 @@ export default function QuestionsPage() {
   }
 
   // Handle upload questions
-  const handleUploadQuestions = async (questionsData: any[]): Promise<void> => {
+  const handleUploadQuestions = async (questionsData: QuestionFormData[]): Promise<void> => {
     try {
       const results: QuestionWithRelations[] = []
       for (const questionData of questionsData) {
-        const newQuestion = await supabaseHelpers.createQuestion(questionData)
+        // Thêm likes và dislikes vào questionData
+        const processedQuestionData = {
+          ...questionData,
+          likes: 0,
+          dislikes: 0
+        }
+        const newQuestion = await supabaseHelpers.createQuestion(processedQuestionData)
         results.push(newQuestion)
       }
       

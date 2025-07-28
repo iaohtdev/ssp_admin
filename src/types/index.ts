@@ -72,8 +72,8 @@ export interface PackFormData {
   name: string
   description?: string
   game_id: string
-  is_premium?: boolean
-  is_active?: boolean
+  is_premium: boolean
+  is_active: boolean
 }
 
 export interface QuestionFormData {

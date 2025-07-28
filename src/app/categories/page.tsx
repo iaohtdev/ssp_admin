@@ -26,7 +26,7 @@ export default function CategoriesPage() {
   const [selectedCategory, setSelectedCategory] = useState<CategoryWithGames | null>(null)
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create')
   const [isDeleting, setIsDeleting] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  // Xóa dòng: const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Load data from Supabase
   useEffect(() => {
@@ -100,7 +100,7 @@ export default function CategoriesPage() {
   // Handle form submit
   const handleFormSubmit = async (data: CategoryFormData) => {
     try {
-      setIsSubmitting(true)
+      // Xóa dòng: setIsSubmitting(true)
       setError(null)
       
       if (formMode === 'create') {
@@ -121,26 +121,9 @@ export default function CategoriesPage() {
       console.error('Lỗi khi lưu danh mục:', err)
       setError('Không thể lưu danh mục. Vui lòng thử lại.')
       toast.error('Lỗi!', 'Không thể lưu danh mục. Vui lòng thử lại.')
-    } finally {
-      setIsSubmitting(false)
-    }
+    } // Xóa finally block vì không cần thiết
   }
 
-  // Handle delete category
-  const handleDeleteConfirm = async () => {
-    if (!selectedCategory) return
-    
-    try {
-      await supabaseHelpers.deleteCategory(selectedCategory.id)
-      setCategories(prev => prev.filter(c => c.id !== selectedCategory.id))
-      setIsDeleteModalOpen(false)
-      setSelectedCategory(null)
-      toast.success('Thành công!', 'Danh mục đã được xóa thành công')
-    } catch (err) {
-      console.error('Lỗi khi xóa danh mục:', err)
-      toast.error('Lỗi!', 'Không thể xóa danh mục. Vui lòng thử lại.')
-    }
-  }
 
   // Handle confirm delete
   const handleConfirmDelete = async () => {

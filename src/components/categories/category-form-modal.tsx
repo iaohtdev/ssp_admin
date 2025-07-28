@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { X, Loader2, Save, Plus, FolderPlus } from 'lucide-react'
+import { X, Loader2, Save, FolderPlus } from 'lucide-react'
 import { ModalPortal } from '@/components/ui/modal-portal'
 import { CategoryFormData } from '@/types'
 
@@ -19,7 +19,7 @@ interface CategoryFormModalProps {
   isOpen: boolean
   onClose: () => void
   onSubmit: (data: CategoryFormData) => void
-  initialData?: any
+  initialData?: CategoryFormData
   mode: 'create' | 'edit'
   games?: { id: string; name: string }[]
 }

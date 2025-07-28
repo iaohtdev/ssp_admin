@@ -2,7 +2,6 @@
 
 import { X, MessageSquare, Calendar, ThumbsUp, ThumbsDown, Package, Folder } from 'lucide-react'
 import { ModalPortal } from '@/components/ui/modal-portal'
-import { formatDate } from '@/lib/utils'
 import { Question, Pack, Category } from '@/types'
 
 interface QuestionWithRelations extends Question {

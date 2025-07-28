@@ -48,16 +48,13 @@ export function QuestionFormModal({
   packs = [],
   categories = []
 }: QuestionFormModalProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isDirty },
     reset,
-    setValue,
-    watch
+    formState: { errors, isSubmitting, isDirty }
   } = useForm<QuestionFormData>({
     resolver: zodResolver(questionSchema),
     defaultValues: {
@@ -87,7 +84,6 @@ export function QuestionFormModal({
   }, [isOpen, initialData, reset])
 
   const handleFormSubmit = async (data: QuestionFormData) => {
-    setIsSubmitting(true)
     setSubmitSuccess(false)
     
     try {
@@ -102,7 +98,6 @@ export function QuestionFormModal({
     } catch (error) {
       console.error('Lỗi khi lưu câu hỏi:', error)
     } finally {
-      setIsSubmitting(false)
       setSubmitSuccess(false)
     }
   }

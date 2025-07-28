@@ -6,7 +6,7 @@ import {
   Home, 
   Gamepad2, 
   Tag,
-  FolderOpen, 
+  // Xóa FolderOpen import không sử dụng
   Package, 
   MessageCircleQuestion,
   BarChart3

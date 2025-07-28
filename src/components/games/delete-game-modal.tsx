@@ -90,7 +90,7 @@ export function DeleteGameModal({ isOpen, onClose, onConfirm, gameName, isDeleti
           
           <p className="text-gray-700 text-base leading-relaxed">
             Bạn có chắc chắn muốn xóa trò chơi{' '}
-            <span className="font-semibold text-gray-900 bg-gray-100 px-2 py-1 rounded">"{gameName}"</span>?
+            <span className="font-semibold text-gray-900 bg-gray-100 px-2 py-1 rounded">&quot;{gameName}&quot;</span>?
           </p>
           <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-red-700 text-sm flex items-start">

@@ -98,7 +98,7 @@ export function DeleteCategoryModal({
           
           <p className="text-gray-700 text-base leading-relaxed mb-4">
             Bạn có chắc chắn muốn xóa danh mục{' '}
-            <span className="font-semibold text-gray-900 bg-gray-100 px-2 py-1 rounded">"{categoryName}"</span> không?
+            <span className="font-semibold text-gray-900 bg-gray-100 px-2 py-1 rounded">&quot;{categoryName}&quot;</span> không?
           </p>
           
           <div className="p-4 bg-red-50 border border-red-200 rounded-lg">

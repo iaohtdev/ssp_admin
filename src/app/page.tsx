@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { supabaseHelpers } from '@/lib/supabase'
 import { Gamepad2, FolderOpen, Package, MessageCircleQuestion } from 'lucide-react'
-import { Game, Category, Pack, Question } from '@/types'
+import { Game, Question } from '@/types'
 
 export default function Dashboard() {
   const [stats, setStats] = useState({

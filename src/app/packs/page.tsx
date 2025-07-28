@@ -1,10 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, Edit, Trash2, Eye, Package } from 'lucide-react'
+import { Plus, Edit, Trash2, Eye } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { supabaseHelpers } from '@/lib/supabase'
-import { Pack, Game } from '@/types'
+import { Pack, Game, PackFormData } from '@/types'
 import { PackFormModal } from '@/components/packs/pack-form-modal'
 import { DeletePackModal } from '@/components/packs/delete-pack-modal'
 import { PackDetailModal } from '@/components/packs/pack-detail-modal'
@@ -31,7 +31,7 @@ export default function PacksPage() {
   const [selectedPack, setSelectedPack] = useState<PackWithRelations | null>(null)
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create')
   const [isDeleting, setIsDeleting] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  // Xóa dòng: const [isSubmitting, setIsSubmitting] = useState(false)
   const toast = useToast()
 
   // Load data from Supabase
@@ -118,9 +118,9 @@ export default function PacksPage() {
   }
 
   // Handle form submit
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = async (data: PackFormData) => {
     try {
-      setIsSubmitting(true)
+      // Xóa dòng: setIsSubmitting(true)
       setError(null)
       
       if (formMode === 'create') {
@@ -151,9 +151,7 @@ export default function PacksPage() {
       console.error('Lỗi khi lưu gói:', err)
       setError('Không thể lưu gói. Vui lòng thử lại.')
       toast.error('Lỗi!', 'Không thể lưu gói. Vui lòng thử lại.')
-    } finally {
-      setIsSubmitting(false)
-    }
+    } // Xóa finally block vì không cần thiết
   }
 
   // Handle delete pack

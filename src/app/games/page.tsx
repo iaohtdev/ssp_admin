@@ -25,7 +25,7 @@ export default function GamesPage() {
   const [selectedGame, setSelectedGame] = useState<Game | null>(null)
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create')
   const [isDeleting, setIsDeleting] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  // Xóa dòng: const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
     loadGames()
@@ -87,7 +87,7 @@ export default function GamesPage() {
   // Step 2: Handle form submit with Supabase
   const handleFormSubmit = async (data: GameFormData) => {
     try {
-      setIsSubmitting(true)
+      // Xóa dòng: setIsSubmitting(true)
       
       if (formMode === 'create') {
         const newGame = await supabaseHelpers.createGame({
@@ -115,9 +115,7 @@ export default function GamesPage() {
       console.error('Error saving game:', err)
       setError('Không thể lưu trò chơi')
       toast.error('Lỗi!', 'Không thể lưu trò chơi. Vui lòng thử lại.')
-    } finally {
-      setIsSubmitting(false)
-    }
+    } // Xóa finally block vì không cần thiết
   }
 
   // Step 5: Handle confirm delete with Supabase
