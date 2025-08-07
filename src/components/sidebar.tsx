@@ -30,7 +30,7 @@ export function Sidebar() {
     <div className="flex flex-col w-64 bg-white shadow-lg">
       {/* Logo */}
       <div className="flex items-center justify-center h-16 px-4 bg-blue-600">
-        <h1 className="text-xl font-bold text-white">Ét Ô Ét Admin</h1>
+        <h1 className="text-xl font-bold text-white">SSP Admin</h1>
       </div>
 
       {/* Navigation */}
