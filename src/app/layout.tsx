@@ -9,8 +9,8 @@ import { ToastContainer } from '@/components/ui/toast'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Ét Ô Ét Admin Dashboard',
-  description: 'Quản lý nội dung trò chơi party Ét Ô Ét',
+  title: 'SSP Admin | ',
+  description: 'Quản lý nội dung trò chơi ',
 }
 
 export default function RootLayout({
