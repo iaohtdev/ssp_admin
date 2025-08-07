@@ -51,7 +51,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-[50vh]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
           <p className="text-gray-600">Đang tải dữ liệu...</p>
@@ -62,7 +62,7 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-[50vh]">
         <div className="text-center">
           <p className="text-red-600 mb-4">{error}</p>
           <button 
@@ -104,45 +104,45 @@ export default function Dashboard() {
   ]
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+    <div className="space-y-6">
+      <div className="mb-6 lg:mb-8">
+        <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Dashboard</h1>
         <p className="text-gray-600 mt-2">Tổng quan về hệ thống quản lý SSP</p>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      {/* Stats Cards - Responsive Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8">
         {statCards.map((card) => (
-          <div key={card.title} className="bg-white rounded-lg shadow p-6">
+          <div key={card.title} className="bg-white rounded-lg shadow p-4 lg:p-6">
             <div className="flex items-center">
-              <div className={`p-3 rounded-lg ${card.color}`}>
-                <card.icon className="w-6 h-6 text-white" />
+              <div className={`p-2 lg:p-3 rounded-lg ${card.color}`}>
+                <card.icon className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">{card.title}</p>
-                <p className="text-2xl font-bold text-gray-900">{card.value}</p>
+              <div className="ml-3 lg:ml-4 min-w-0 flex-1">
+                <p className="text-xs lg:text-sm font-medium text-gray-600 truncate">{card.title}</p>
+                <p className="text-xl lg:text-2xl font-bold text-gray-900">{card.value}</p>
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Recent Activity - Responsive Layout */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Recent Games */}
         <div className="bg-white rounded-lg shadow">
-          <div className="p-6 border-b border-gray-200">
+          <div className="p-4 lg:p-6 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">Trò chơi gần đây</h2>
           </div>
-          <div className="p-6">
+          <div className="p-4 lg:p-6">
             <div className="space-y-4">
               {recentGames.map((game) => (
-                <div key={game.id} className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-gray-900">{game.name}</p>
-                    <p className="text-sm text-gray-500">{game.description}</p>
+                <div key={game.id} className="flex items-start justify-between space-x-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-gray-900 truncate">{game.name}</p>
+                    <p className="text-sm text-gray-500 line-clamp-2">{game.description}</p>
                   </div>
-                  <span className={`px-2 py-1 text-xs rounded-full ${
+                  <span className={`px-2 py-1 text-xs rounded-full whitespace-nowrap ${
                     game.is_active 
                       ? 'bg-green-100 text-green-800' 
                       : 'bg-red-100 text-red-800'
@@ -157,14 +157,14 @@ export default function Dashboard() {
 
         {/* Popular Questions */}
         <div className="bg-white rounded-lg shadow">
-          <div className="p-6 border-b border-gray-200">
+          <div className="p-4 lg:p-6 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">Câu hỏi phổ biến</h2>
           </div>
-          <div className="p-6">
+          <div className="p-4 lg:p-6">
             <div className="space-y-4">
               {popularQuestions.map((question) => (
-                <div key={question.id} className="flex items-start justify-between">
-                  <div className="flex-1">
+                <div key={question.id} className="flex items-start justify-between space-x-3">
+                  <div className="min-w-0 flex-1">
                     <p className="text-sm text-gray-900 line-clamp-2">{question.content}</p>
                     <div className="flex items-center mt-2 space-x-4">
                       <span className="text-xs text-gray-500">
@@ -175,7 +175,7 @@ export default function Dashboard() {
                       </span>
                     </div>
                   </div>
-                  <span className="px-2 py-1 text-xs rounded-full ml-2 bg-blue-100 text-blue-800">
+                  <span className="px-2 py-1 text-xs rounded-full whitespace-nowrap bg-blue-100 text-blue-800">
                     Câu hỏi
                   </span>
                 </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
 import { Sidebar } from '@/components/sidebar'
@@ -14,6 +14,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   const { user, isLoading } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   
   const isLoginPage = pathname === '/login'
 
@@ -55,16 +56,32 @@ export default function AuthGuard({ children }: AuthGuardProps) {
     return null
   }
 
-  // Step 6: Hiển thị layout dashboard cho user đã đăng nhập
+  // Step 6: Hiển thị layout dashboard responsive cho user đã đăng nhập
   return (
     <div className="flex h-screen bg-gray-100">
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        >
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-75"></div>
+        </div>
+      )}
+      
       {/* Sidebar */}
-      <Sidebar />
+      <Sidebar 
+        sidebarOpen={sidebarOpen} 
+        setSidebarOpen={setSidebarOpen} 
+      />
       
       {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+      <div className="flex-1 flex flex-col overflow-hidden lg:ml-64">
+        <Header 
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+        />
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4 lg:p-6">
           {children}
         </main>
       </div>
