@@ -510,7 +510,14 @@ export default function QuestionsPage() {
                     </td>
                     <td className="px-2 py-4 text-center">{idx + 1}</td>
                     <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-gray-900 max-w-xs truncate" title={question.content}>
+                      <div className="text-sm font-medium text-gray-900 max-w-xs" title={question.content} style={{
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        lineHeight: '1.4em',
+                        maxHeight: '2.8em'
+                      }}>
                         {question.content}
                       </div>
                     </td>
