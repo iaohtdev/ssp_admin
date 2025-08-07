@@ -9,7 +9,7 @@ import { ToastContainer } from '@/components/ui/toast'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'SSP Admin | ',
+  title: 'SSP Admin | Dashboard ',
   description: 'Quản lý nội dung trò chơi ',
 }
 
