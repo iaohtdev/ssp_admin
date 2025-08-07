@@ -34,6 +34,8 @@ export default function QuestionsPage() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
   const [packFilter, setPackFilter] = useState<string>('all')
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [showSelectMenu, setShowSelectMenu] = useState(false)
   
   // Toast hook
   const toast = useToast()
@@ -215,6 +217,80 @@ export default function QuestionsPage() {
     }
   }
 
+  // Handle select all questions
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(filteredQuestions.map(q => q.id))
+    } else {
+      setSelectedIds([])
+    }
+  }
+
+  // Handle select all by category
+  const handleSelectAllByCategory = (categoryId: string) => {
+    const categoryQuestions = filteredQuestions.filter(q => q.category_id === categoryId)
+    const categoryIds = categoryQuestions.map(q => q.id)
+    
+    // Step 1: Kiểm tra xem tất cả câu hỏi trong danh mục đã được chọn chưa
+    const allCategorySelected = categoryIds.every(id => selectedIds.includes(id))
+    
+    if (allCategorySelected) {
+      // Step 2: Bỏ chọn tất cả câu hỏi trong danh mục
+      setSelectedIds(prev => prev.filter(id => !categoryIds.includes(id)))
+    } else {
+      // Step 3: Chọn tất cả câu hỏi trong danh mục
+      setSelectedIds(prev => [...new Set([...prev, ...categoryIds])])
+    }
+  }
+
+  // Handle select all questions (all pages)
+  const handleSelectAllQuestions = () => {
+    const allQuestionIds = questions.map(q => q.id)
+    const allSelected = allQuestionIds.every(id => selectedIds.includes(id))
+    
+    if (allSelected) {
+      setSelectedIds([])
+    } else {
+      setSelectedIds(allQuestionIds)
+    }
+  }
+
+  // Handle select individual question
+  const handleSelectRow = (questionId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedIds(prev => [...prev, questionId])
+    } else {
+      setSelectedIds(prev => prev.filter(id => id !== questionId))
+    }
+  }
+
+  // Handle delete multiple questions
+  const handleDeleteMultiple = async () => {
+    if (selectedIds.length === 0) return
+    
+    try {
+      setIsDeleting(true)
+      
+      // Step 1: Xóa từng câu hỏi đã chọn
+      await Promise.all(
+        selectedIds.map(id => supabaseHelpers.deleteQuestion(id))
+      )
+      
+      // Step 2: Cập nhật danh sách câu hỏi
+      setQuestions(prev => prev.filter(q => !selectedIds.includes(q.id)))
+      
+      // Step 3: Reset selection
+      setSelectedIds([])
+      
+      toast.success('Thành công!', `Đã xóa ${selectedIds.length} câu hỏi thành công`)
+    } catch (err) {
+      console.error('Lỗi khi xóa câu hỏi:', err)
+      toast.error('Lỗi!', 'Không thể xóa câu hỏi. Vui lòng thử lại.')
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -337,33 +413,85 @@ export default function QuestionsPage() {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Nội dung
+                <th className="px-4 py-3 text-center">
+                  <div className="flex items-center justify-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.length === filteredQuestions.length && filteredQuestions.length > 0}
+                      onChange={e => handleSelectAll(e.target.checked)}
+                    />
+                    <div className="relative">
+                      <button
+                        onClick={() => setShowSelectMenu(!showSelectMenu)}
+                        className="text-gray-500 hover:text-gray-700 p-1"
+                        title="Tùy chọn chọn"
+                      >
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                      
+                      {showSelectMenu && (
+                        <div className="absolute top-full left-0 mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                          <div className="p-2">
+                            <button
+                              onClick={() => {
+                                handleSelectAllQuestions()
+                                setShowSelectMenu(false)
+                              }}
+                              className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded"
+                            >
+                              {questions.every(q => selectedIds.includes(q.id)) ? 'Bỏ chọn tất cả câu hỏi' : 'Chọn tất cả câu hỏi'}
+                            </button>
+                            
+                            <div className="border-t border-gray-100 my-2"></div>
+                            
+                            <div className="text-xs text-gray-500 px-3 py-1 font-medium">Chọn theo danh mục:</div>
+                            
+                            {categories.map(category => {
+                              const categoryQuestions = filteredQuestions.filter(q => q.category_id === category.id)
+                              if (categoryQuestions.length === 0) return null
+                              
+                              const categoryIds = categoryQuestions.map(q => q.id)
+                              const allCategorySelected = categoryIds.every(id => selectedIds.includes(id))
+                              
+                              return (
+                                <button
+                                  key={category.id}
+                                  onClick={() => {
+                                    handleSelectAllByCategory(category.id)
+                                    setShowSelectMenu(false)
+                                  }}
+                                  className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded flex items-center justify-between"
+                                >
+                                  <span>{category.name}</span>
+                                  <span className="text-xs text-gray-400">({categoryQuestions.length})</span>
+                                  {allCategorySelected && (
+                                    <span className="text-green-600 text-xs">✓</span>
+                                  )}
+                                </button>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Gói
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Danh mục
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Tương tác
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Trạng thái
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Ngày tạo
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Thao tác
-                </th>
+                <th className="px-2 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">STT</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nội dung</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gói</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Danh mục</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tương tác</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày tạo</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredQuestions.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                  <td colSpan={9} className="px-6 py-8 text-center text-gray-500">
                     {searchTerm || statusFilter !== 'all' || packFilter !== 'all' || categoryFilter !== 'all'
                       ? 'Không tìm thấy câu hỏi nào phù hợp'
                       : 'Chưa có câu hỏi nào'
@@ -371,8 +499,16 @@ export default function QuestionsPage() {
                   </td>
                 </tr>
               ) : (
-                filteredQuestions.map((question) => (
+                filteredQuestions.map((question, idx) => (
                   <tr key={question.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-4 text-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(question.id)}
+                        onChange={e => handleSelectRow(question.id, e.target.checked)}
+                      />
+                    </td>
+                    <td className="px-2 py-4 text-center">{idx + 1}</td>
                     <td className="px-6 py-4">
                       <div className="text-sm font-medium text-gray-900 max-w-xs truncate" title={question.content}>
                         {question.content}
@@ -457,6 +593,42 @@ export default function QuestionsPage() {
         </div>
       </div>
 
+      {/* Floating Action Button for Bulk Delete */}
+      {selectedIds.length > 0 && (
+        <div className="fixed bottom-6 right-6 z-50">
+          <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-4">
+            <div className="flex items-center space-x-3">
+              <div className="text-sm text-gray-600">
+                Đã chọn {selectedIds.length} câu hỏi
+              </div>
+              <button
+                onClick={() => setSelectedIds([])}
+                className="text-gray-400 hover:text-gray-600 text-sm"
+              >
+                Bỏ chọn
+              </button>
+              <button
+                onClick={handleDeleteMultiple}
+                disabled={isDeleting}
+                className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isDeleting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Đang xóa...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Xóa tất cả
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modals */}
       <QuestionFormModal
         isOpen={isFormModalOpen}
@@ -491,4 +663,7 @@ export default function QuestionsPage() {
       />
     </div>
   )
+
 }
+
+  
