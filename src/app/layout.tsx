@@ -1,16 +1,16 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { Sidebar } from '@/components/sidebar'
-import { Header } from '../components/header'
+import { AuthProvider } from '@/contexts/auth-context'
 import { ToastProvider } from '@/contexts/toast-context'
 import { ToastContainer } from '@/components/ui/toast'
+import AuthGuard from '@/components/auth-guard'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'SSP Admin | Dashboard ',
-  description: 'Quản lý nội dung trò chơi ',
+  title: 'SSP Admin | Dashboard',
+  description: 'Quản lý nội dung trò chơi',
 }
 
 export default function RootLayout({
@@ -21,21 +21,14 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <body className={inter.className}>
-        <ToastProvider>
-          <div className="flex h-screen bg-gray-100">
-            {/* Sidebar */}
-            <Sidebar />
-            
-            {/* Main content */}
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <Header />
-              <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
-                {children}
-              </main>
-            </div>
-          </div>
-          <ToastContainer />
-        </ToastProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <AuthGuard>
+              {children}
+            </AuthGuard>
+            <ToastContainer />
+          </ToastProvider>
+        </AuthProvider>
       </body>
     </html>
   )
