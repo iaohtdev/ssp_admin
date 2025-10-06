@@ -415,7 +415,7 @@ export default function QuestionsPage() {
                 placeholder="Tìm kiếm câu hỏi..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="filter-input w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             
@@ -424,7 +424,7 @@ export default function QuestionsPage() {
               <select 
                 value={packFilter}
                 onChange={(e) => setPackFilter(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="filter-select w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">Tất cả gói</option>
                 {packs.map(pack => (
@@ -438,7 +438,7 @@ export default function QuestionsPage() {
               <select 
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="filter-select w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">Tất cả danh mục</option>
                 {categories.map(category => (
@@ -452,7 +452,7 @@ export default function QuestionsPage() {
               <select 
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'inactive')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="filter-select w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">Tất cả trạng thái</option>
                 <option value="active">Hoạt động</option>
@@ -500,14 +500,14 @@ export default function QuestionsPage() {
                                 handleSelectAllQuestions()
                                 setShowSelectMenu(false)
                               }}
-                              className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded"
+                              className="w-full text-left px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-100 rounded"
                             >
                               {questions.every(q => selectedIds.includes(q.id)) ? 'Bỏ chọn tất cả câu hỏi' : 'Chọn tất cả câu hỏi'}
                             </button>
                             
                             <div className="border-t border-gray-100 my-2"></div>
                             
-                            <div className="text-xs text-gray-500 px-3 py-1 font-medium">Chọn theo danh mục:</div>
+                            <div className="text-xs text-gray-700 px-3 py-1 font-bold">Chọn theo danh mục:</div>
                             
                             {categories.map(category => {
                               const categoryQuestions = filteredQuestions.filter(q => q.category_id === category.id)
@@ -523,13 +523,13 @@ export default function QuestionsPage() {
                                     handleSelectAllByCategory(category.id)
                                     setShowSelectMenu(false)
                                   }}
-                                  className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded flex items-center justify-between"
+                                  className="w-full text-left px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-100 rounded flex items-center justify-between"
                                 >
                                   <span>{category.name}</span>
-                                  <span className="text-xs text-gray-400">({categoryQuestions.length})</span>
-                                  {allCategorySelected && (
-                                    <span className="text-green-600 text-xs">✓</span>
-                                  )}
+                                  <span className="text-xs text-gray-600 font-medium">
+                                    ({categoryQuestions.length})
+                                    {allCategorySelected && ' ✓'}
+                                  </span>
                                 </button>
                               )
                             })}

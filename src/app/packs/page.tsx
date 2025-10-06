@@ -244,7 +244,7 @@ export default function PacksPage() {
                 placeholder="Tìm kiếm gói..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="filter-input w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             
@@ -253,7 +253,7 @@ export default function PacksPage() {
               <select 
                 value={gameFilter}
                 onChange={(e) => setGameFilter(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="filter-select w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">Tất cả trò chơi</option>
                 {games.map(game => (
@@ -267,7 +267,7 @@ export default function PacksPage() {
               <select 
                 value={premiumFilter}
                 onChange={(e) => setPremiumFilter(e.target.value as 'all' | 'premium' | 'free')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="filter-select w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">Tất cả loại</option>
                 <option value="premium">Premium</option>
@@ -280,7 +280,7 @@ export default function PacksPage() {
               <select 
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'inactive')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="filter-select w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">Tất cả trạng thái</option>
                 <option value="active">Hoạt động</option>
@@ -302,25 +302,25 @@ export default function PacksPage() {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">
                   Tên gói
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">
                   Trò chơi
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">
                   Mô tả
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">
                   Loại
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">
                   Trạng thái
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">
                   Ngày tạo
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">
                   Thao tác
                 </th>
               </tr>

@@ -89,3 +89,26 @@ body {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 200ms;
 }
+
+/* Custom styling for filter inputs and selects */
+.filter-input::placeholder {
+  color: #374151 !important; /* text-gray-700 */
+  font-weight: 500 !important; /* font-medium */
+  opacity: 0.8 !important;
+}
+
+.filter-select {
+  color: #374151 !important; /* text-gray-700 */
+  font-weight: 500 !important; /* font-medium */
+}
+
+.filter-select option {
+  color: #374151 !important; /* text-gray-700 */
+  font-weight: 500 !important; /* font-medium */
+  background-color: white !important;
+}
+
+/* Focus states */
+.filter-input:focus::placeholder {
+  color: #6B7280 !important; /* text-gray-500 */
+}
