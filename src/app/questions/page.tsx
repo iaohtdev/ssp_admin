@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, Edit, Trash2, Eye, Upload } from 'lucide-react'
+import { Plus, Edit, Trash2, Eye, Upload, Download } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { supabaseHelpers } from '@/lib/supabase'
 import { Question, Pack, Category } from '@/types'
@@ -9,6 +9,7 @@ import { QuestionFormModal } from '@/components/questions/question-form-modal'
 import { DeleteQuestionModal } from '@/components/questions/delete-question-modal'
 import { QuestionDetailModal } from '@/components/questions/question-detail-modal'
 import { QuestionUploadModal } from '@/components/questions/question-upload-modal'
+import * as XLSX from 'xlsx'
 
 import { useToast } from '@/hooks/use-toast'
 
@@ -291,6 +292,59 @@ export default function QuestionsPage() {
     }
   }
 
+  // Handle download questions to Excel
+  const handleDownloadExcel = () => {
+    try {
+      // Prepare data for Excel export
+      const excelData = questions.map((question, index) => ({
+        'STT': index + 1,
+        'Nội dung': question.content,
+        'Gói': getPackName(question.pack_id),
+        'Danh mục': getCategoryName(question.category_id),
+        'Likes': question.likes || 0,
+        'Dislikes': question.dislikes || 0,
+        'Trạng thái': question.is_active ? 'Hoạt động' : 'Tạm dừng',
+        'Ngày tạo': formatDate(question.created_at),
+        // 'Ngày cập nhật': formatDate(question.updated_at)
+      }))
+
+      // Create workbook and worksheet
+      const wb = XLSX.utils.book_new()
+      const ws = XLSX.utils.json_to_sheet(excelData)
+
+      // Set column widths
+      const colWidths = [
+        { wch: 5 },   // STT
+        { wch: 50 },  // Nội dung
+        { wch: 20 },  // Gói
+        { wch: 20 },  // Danh mục
+        { wch: 10 },  // Likes
+        { wch: 10 },  // Dislikes
+        { wch: 15 },  // Trạng thái
+        { wch: 20 },  // Ngày tạo
+        { wch: 20 }   // Ngày cập nhật
+      ]
+      ws['!cols'] = colWidths
+
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(wb, ws, 'Danh sách câu hỏi')
+
+      // Generate filename with current date
+      const now = new Date()
+      const dateStr = now.toISOString().split('T')[0] // YYYY-MM-DD format
+      const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '-') // HH-MM-SS format
+      const filename = `questions_${dateStr}_${timeStr}.xlsx`
+
+      // Download file
+      XLSX.writeFile(wb, filename)
+      
+      toast.success('Thành công!', `Đã tải xuống ${questions.length} câu hỏi thành file Excel`)
+    } catch (err) {
+      console.error('Lỗi khi tải xuống Excel:', err)
+      toast.error('Lỗi!', 'Không thể tải xuống file Excel. Vui lòng thử lại.')
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -326,6 +380,13 @@ export default function QuestionsPage() {
           <p className="text-gray-600 mt-2">Quản lý các câu hỏi trong hệ thống</p>
         </div>
         <div className="flex items-center space-x-3">
+          <button 
+            onClick={handleDownloadExcel}
+            className="flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Download Excel
+          </button>
           <button 
             onClick={() => setIsUploadModalOpen(true)}
             className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
@@ -670,7 +731,6 @@ export default function QuestionsPage() {
       />
     </div>
   )
-
 }
 
   
